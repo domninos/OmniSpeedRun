@@ -1,0 +1,6 @@
+players:
+  Notch: 1
+finished:
+  Notch: 10910
+commandsToExecute:
+  - 'say %player% has killed an ender dragon. %player% is awesome!'

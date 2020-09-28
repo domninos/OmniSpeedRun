@@ -1,0 +1,12 @@
+name: OmniSpeedRun
+main: net.omni.speedrun.SpeedRunPlugin
+version: '1.0'
+api-version: '1.16'
+author: omni
+softdepend:
+  - PlaceholderAPI
+description: A speedrun minecraft plugin.
+commands:
+  speedrun:
+    usage: /<command>
+    description: Main command.
