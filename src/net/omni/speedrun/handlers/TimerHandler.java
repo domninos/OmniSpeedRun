@@ -21,8 +21,10 @@ public class TimerHandler {
             for (Map.Entry<String, Integer> entry : timers.entrySet()) {
                 Player player = Bukkit.getPlayerExact(entry.getKey());
 
-                if (player == null)
+                if (player == null) {
+                    stopTimer(entry.getKey());
                     continue;
+                }
 
                 entry.setValue(entry.getValue() + 1);
             }

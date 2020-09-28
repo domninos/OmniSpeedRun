@@ -10,3 +10,6 @@ commands:
   speedrun:
     usage: /<command>
     description: Main command.
+    aliases:
+      - sr
+      - speedr

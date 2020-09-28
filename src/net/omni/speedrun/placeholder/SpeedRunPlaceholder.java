@@ -28,29 +28,39 @@ public class SpeedRunPlaceholder extends PlaceholderExpansion {
 
     @Override
     public String onPlaceholderRequest(Player player, String params) {
-        String top = "";
+        if (params.startsWith("top")) {
+            String top = "";
 
-        switch (params) {
-            case "top_1":
-                top = plugin.getTopHandler().getTop(1);
-                break;
-            case "top_2":
-                top = plugin.getTopHandler().getTop(2);
-                break;
-            case "top_3":
-                top = plugin.getTopHandler().getTop(3);
-                break;
-            case "top_4":
-                top = plugin.getTopHandler().getTop(4);
-                break;
-            case "top_5":
-                top = plugin.getTopHandler().getTop(5);
-                break;
+            switch (params) {
+                case "top_1":
+                    top = plugin.getTopHandler().getTop(1);
+                    break;
+                case "top_2":
+                    top = plugin.getTopHandler().getTop(2);
+                    break;
+                case "top_3":
+                    top = plugin.getTopHandler().getTop(3);
+                    break;
+                case "top_4":
+                    top = plugin.getTopHandler().getTop(4);
+                    break;
+                case "top_5":
+                    top = plugin.getTopHandler().getTop(5);
+                    break;
+            }
+
+            if (top == null)
+                top = "Unavailable";
+
+            return top;
+        } else if (params.equals("timer")) {
+            if (plugin.getTimerHandler().hasTimer(player.getName()))
+                return plugin.getTimerHandler().convertTime(plugin.getTimerHandler().getTimer(player.getName()));
+            else if (plugin.getTimerHandler().isInConfig(player.getName()))
+                return plugin.getTimerHandler().
+                        convertTime(plugin.getTimerHandler().getTimeInConfig(player.getName()));
         }
 
-        if (top == null)
-            top = "Unavailable";
-
-        return top;
+        return "Unavailable";
     }
 }
