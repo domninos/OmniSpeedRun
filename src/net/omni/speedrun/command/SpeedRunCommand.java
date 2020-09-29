@@ -19,7 +19,8 @@ public class SpeedRunCommand implements CommandExecutor {
                 "&l&eSpeedRun Help",
                 "&e/speedrun start <player> &7» Starts timer of the player.",
                 "&e/speedrun stop <player> &7» Stops timer of the player.",
-                "&e/speedrun timer |player| &7» Shows your timer | another player's timer."
+                "&e/speedrun timer |player| &7» Shows your timer | another player's timer.",
+                "&e/speedrun reset |player| &7» Resets your timer | another player's timer."
         };
 
         this.help = plugin.translate(String.join("\n", msg));
@@ -60,6 +61,30 @@ public class SpeedRunCommand implements CommandExecutor {
                     plugin.sendMessage(player, "&aYour saved time: &e" + time);
                 } else // timer not found anywhere
                     plugin.sendMessage(player, "&cYour timer has not been found.");
+            } else if (args[0].equalsIgnoreCase("reset")) {
+                if (!(sender instanceof Player)) {
+                    plugin.sendMessage(sender, "&cOnly players can execute this command.");
+                    return true;
+                }
+
+                Player player = (Player) sender;
+
+                if (!player.hasPermission("speedrun.reset"))
+                    return noPerms(player);
+
+                if (!plugin.getTimerHandler().hasTimer(player.getName())) {
+                    plugin.sendMessage(player, "&cYou do not have a timer on.");
+                    return true;
+                }
+
+                plugin.getTimerHandler().reset(player.getName());
+                plugin.sendMessage(player, "&cYour timer has been reset.");
+            } else if (args[0].equalsIgnoreCase("reload")) {
+                if (!sender.hasPermission("speedrun.reload"))
+                    return noPerms(sender);
+
+                plugin.reloadConfig();
+                plugin.sendMessage(sender, "&aSuccessfully reloaded config.");
             } else
                 plugin.sendMessage(sender, help);
 
@@ -69,7 +94,8 @@ public class SpeedRunCommand implements CommandExecutor {
         if (args.length == 2) {
             if (!(args[0].equalsIgnoreCase("start")
                     || args[0].equalsIgnoreCase("stop")
-                    || args[0].equalsIgnoreCase("timer"))) {
+                    || args[0].equalsIgnoreCase("timer")
+                    || args[0].equalsIgnoreCase("reset"))) {
                 plugin.sendMessage(sender, help);
                 return true;
             }
@@ -137,6 +163,24 @@ public class SpeedRunCommand implements CommandExecutor {
                 }
 
                 return true;
+            } else if (args[0].equalsIgnoreCase("reset")) {
+                if (!sender.hasPermission("speedrun.reset.other"))
+                    return noPerms(sender);
+
+                if (target == null) {
+                    plugin.sendMessage(sender, "&cPlayer not found.");
+                    return true;
+                }
+
+
+                if (!plugin.getTimerHandler().hasTimer(target.getName())) {
+                    plugin.sendMessage(sender, "&c" + target.getName() + " does not have a timer on.");
+                    return true;
+                }
+
+                plugin.getTimerHandler().reset(target.getName());
+                plugin.sendMessage(sender, "&a" + target.getName() + "'s timer has been reset.");
+                plugin.sendMessage(target, "&aYour timer has been reset by " + sender.getName());
             } else
                 plugin.sendMessage(sender, help);
 

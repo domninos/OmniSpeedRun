@@ -72,6 +72,21 @@ public class TimerHandler {
     }
 
     /**
+     * Restarts/resets player's timer.
+     *
+     * @param name {@code String} player
+     */
+    public void reset(String name) {
+        if (timers.containsKey(name)) {
+            plugin.getConfig().set("players." + name, null);
+            plugin.saveConfig();
+
+            timers.remove(name);
+            startTimer(name);
+        }
+    }
+
+    /**
      * Saves current time to config.
      *
      * @param name - {@code String} to save
