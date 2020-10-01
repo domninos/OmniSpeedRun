@@ -65,6 +65,7 @@ public class TimerHandler {
     public void finish(String name) {
         if (timers.containsKey(name)) {
             plugin.getConfig().set("finished." + name, timers.get(name));
+            plugin.getConfig().set("players." + name, null);
             plugin.saveConfig();
 
             stopTimer(name);

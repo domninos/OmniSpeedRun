@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
@@ -40,11 +41,27 @@ public class PlayerListener implements Listener {
     }
 
     @EventHandler
+    public void onPlayerDeath(PlayerDeathEvent event) {
+        Player player = event.getEntity();
+
+        if (plugin.getTimerHandler().hasTimer(player.getName())) {
+            plugin.getTimerHandler().reset(player.getName());
+            plugin.sendMessage(player, "&aYour timer has been reset.");
+        }
+    }
+
+    @EventHandler
     public void onPlayerKillEnderDragon(EntityDeathEvent event) {
         LivingEntity entity = event.getEntity();
 
         if (entity instanceof EnderDragon) {
+            EnderDragon enderDragon = (EnderDragon) entity;
             Player killer = entity.getKiller();
+
+            if (killer == null) {
+                if (plugin.getBedKillHandler().hasBedDamage(enderDragon))
+                    killer = plugin.getBedKillHandler().getBedDamager(enderDragon);
+            }
 
             if (killer == null) {
                 plugin.sendConsole("&cKiller of an ender dragon not found.");
@@ -63,6 +80,8 @@ public class PlayerListener implements Listener {
                 plugin.getTimerHandler().finish(killer.getName());
                 plugin.getTopHandler().update();
             }
+
+            plugin.getBedKillHandler().removeBedDamage(enderDragon);
         }
     }
 

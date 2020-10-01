@@ -1,9 +1,11 @@
 package net.omni.speedrun;
 
 import net.omni.speedrun.command.SpeedRunCommand;
+import net.omni.speedrun.handlers.BedKillHandler;
 import net.omni.speedrun.handlers.TimerHandler;
 import net.omni.speedrun.handlers.TopHandler;
 import net.omni.speedrun.listener.PlayerListener;
+import net.omni.speedrun.listener.PlayerUseBedListener;
 import net.omni.speedrun.placeholder.SpeedRunPlaceholder;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -14,6 +16,7 @@ public class SpeedRunPlugin extends JavaPlugin {
 
     private TimerHandler timerHandler;
     private TopHandler topHandler;
+    private BedKillHandler bedKillHandler;
 
     @Override
     public void onEnable() {
@@ -24,12 +27,15 @@ public class SpeedRunPlugin extends JavaPlugin {
 
         topHandler.update();
 
+        this.bedKillHandler = new BedKillHandler();
+
         if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
             new SpeedRunPlaceholder(this).register();
             sendConsole("&aSuccessfully registered placeholder.");
         }
 
         new PlayerListener(this).register();
+        new PlayerUseBedListener(this).register();
         new SpeedRunCommand(this).register();
 
         sendConsole("&aSuccessfully enabled OmniSpeedRun v" + getDescription().getVersion());
@@ -38,6 +44,7 @@ public class SpeedRunPlugin extends JavaPlugin {
     @Override
     public void onDisable() {
         timerHandler.flush();
+        bedKillHandler.flush();
         sendConsole("&aSuccessfully disabled OmniSpeedRun.");
     }
 
@@ -59,5 +66,9 @@ public class SpeedRunPlugin extends JavaPlugin {
 
     public TopHandler getTopHandler() {
         return topHandler;
+    }
+
+    public BedKillHandler getBedKillHandler() {
+        return bedKillHandler;
     }
 }
