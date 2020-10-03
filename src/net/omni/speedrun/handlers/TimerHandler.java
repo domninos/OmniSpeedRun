@@ -68,7 +68,7 @@ public class TimerHandler {
             plugin.getConfig().set("players." + name, null);
             plugin.saveConfig();
 
-            stopTimer(name);
+            timers.remove(name);
         }
     }
 
@@ -83,7 +83,6 @@ public class TimerHandler {
             plugin.saveConfig();
 
             timers.remove(name);
-            startTimer(name);
         }
     }
 
