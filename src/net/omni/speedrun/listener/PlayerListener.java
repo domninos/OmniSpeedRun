@@ -25,6 +25,16 @@ public class PlayerListener implements Listener {
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
 
+        if (plugin.getConfig().getBoolean("duoServer")) {
+            for (Player online : Bukkit.getOnlinePlayers()) {
+                if (online != null && !player.getName().equals(online.getName())) {
+                    plugin.getDuoHandler().remove(online);
+                    plugin.getDuoHandler().setDuo(player, online);
+                    break;
+                }
+            }
+        }
+
         if (plugin.getDuoHandler().isInDuo(player.getName())) {
             Duo duo = plugin.getDuoHandler().getDuo(player.getName());
 
@@ -33,10 +43,12 @@ public class PlayerListener implements Listener {
             if (otherPlayer == null)
                 plugin.sendMessage(player, "&cYour duo is not yet online, timer will not start");
             else {
-                plugin.getDuoTimerHandler().startTimer(duo);
-                plugin.sendMessage(player, "&aYour timer has been started.");
-                plugin.sendMessage(otherPlayer, "&aYour timer has been started.");
-                plugin.sendConsole("&aTimer started for " + player.getName() + " and " + otherPlayer.getName());
+                if (plugin.getDuoTimerHandler().isInConfig(duo)) {
+                    plugin.getDuoTimerHandler().startTimer(duo);
+                    plugin.sendMessage(player, "&aYour timer has been started.");
+                    plugin.sendMessage(otherPlayer, "&aYour timer has been started.");
+                    plugin.sendConsole("&aTimer started for " + player.getName() + " and " + otherPlayer.getName());
+                }
             }
         } else {
             if (plugin.getTimerHandler().isInConfig(player.getName())) {

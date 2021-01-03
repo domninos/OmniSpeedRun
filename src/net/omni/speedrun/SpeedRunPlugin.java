@@ -64,6 +64,7 @@ public class SpeedRunPlugin extends JavaPlugin {
         new SpeedRunCommand(this).register();
         new DuoSpeedRunCommand(this).register();
 
+        sendConsole("&aDuo server: " + getConfig().getBoolean("duoServer"));
         sendConsole("&aSuccessfully enabled OmniSpeedRun v" + getDescription().getVersion());
     }
 
