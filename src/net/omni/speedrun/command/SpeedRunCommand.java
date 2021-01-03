@@ -51,12 +51,11 @@ public class SpeedRunCommand implements CommandExecutor {
                 String time;
 
                 if (plugin.getTimerHandler().hasTimer(player.getName())) { // stored in cache
-                    time = plugin.getTimerHandler().convertTime(plugin.getTimerHandler().getTimer(player.getName()));
+                    time = plugin.convertTime(plugin.getTimerHandler().getTimer(player.getName()));
 
                     plugin.sendMessage(player, "&aYour current time: &e" + time);
                 } else if (plugin.getTimerHandler().isInConfig(player.getName())) { // stored in config
-                    time = plugin.getTimerHandler().
-                            convertTime(plugin.getTimerHandler().getTimeInConfig(player.getName()));
+                    time = plugin.convertTime(plugin.getTimerHandler().getTimeInConfig(player.getName()));
 
                     plugin.sendMessage(player, "&aYour saved time: &e" + time);
                 } else // timer not found anywhere
@@ -79,6 +78,13 @@ public class SpeedRunCommand implements CommandExecutor {
 
                 plugin.getTimerHandler().reset(player.getName());
                 plugin.sendMessage(player, "&cYour timer has been reset.");
+
+                for (String command : plugin.getConfig().getStringList("commandsToExecuteOnReset")) {
+                    if (command != null)
+                        Bukkit.dispatchCommand(Bukkit.getConsoleSender(),
+                                command.replaceAll("%player%", player.getName()));
+                }
+
             } else if (args[0].equalsIgnoreCase("reload")) {
                 if (!sender.hasPermission("speedrun.reload"))
                     return noPerms(sender);
@@ -111,6 +117,12 @@ public class SpeedRunCommand implements CommandExecutor {
                     return true;
                 }
 
+                if (plugin.getDuoHandler().isInDuo(target.getName())) {
+                    plugin.sendMessage(sender, "&c" + target.getName()
+                            + " is in a duo, use /duospeedrun");
+                    return true;
+                }
+
                 if (plugin.getTimerHandler().hasTimer(target.getName())) {
                     plugin.sendMessage(sender, "&cPlayer has an already started timer.");
                     return true;
@@ -124,6 +136,12 @@ public class SpeedRunCommand implements CommandExecutor {
 
                 if (target == null) {
                     plugin.sendMessage(sender, "&cPlayer not found.");
+                    return true;
+                }
+
+                if (plugin.getDuoHandler().isInDuo(target.getName())) {
+                    plugin.sendMessage(sender, "&c" + target.getName()
+                            + " is in a duo, use /duospeedrun");
                     return true;
                 }
 
@@ -145,8 +163,7 @@ public class SpeedRunCommand implements CommandExecutor {
                     targetPlayer = args[0];
 
                     if (plugin.getTimerHandler().isInConfig(targetPlayer)) { // player's time is in config
-                        time = plugin.getTimerHandler().
-                                convertTime(plugin.getTimerHandler().getTimeInConfig(targetPlayer));
+                        time = plugin.convertTime(plugin.getTimerHandler().getTimeInConfig(targetPlayer));
 
                         plugin.sendMessage(sender, "&a" + targetPlayer + "'s current time: &e" + time);
                     } else
@@ -155,7 +172,7 @@ public class SpeedRunCommand implements CommandExecutor {
                     targetPlayer = target.getName();
 
                     if (plugin.getTimerHandler().hasTimer(targetPlayer)) {
-                        time = plugin.getTimerHandler().convertTime(plugin.getTimerHandler().getTimer(targetPlayer));
+                        time = plugin.convertTime(plugin.getTimerHandler().getTimer(targetPlayer));
 
                         plugin.sendMessage(sender, "&a" + targetPlayer + "'s current time: &e" + time);
                     } else
@@ -172,6 +189,11 @@ public class SpeedRunCommand implements CommandExecutor {
                     return true;
                 }
 
+                if (plugin.getDuoHandler().isInDuo(target.getName())) {
+                    plugin.sendMessage(sender, "&c" + target.getName()
+                            + " is in a duo, use /duospeedrun");
+                    return true;
+                }
 
                 if (!plugin.getTimerHandler().hasTimer(target.getName())) {
                     plugin.sendMessage(sender, "&c" + target.getName() + " does not have a timer on.");
@@ -181,6 +203,12 @@ public class SpeedRunCommand implements CommandExecutor {
                 plugin.getTimerHandler().reset(target.getName());
                 plugin.sendMessage(sender, "&a" + target.getName() + "'s timer has been reset.");
                 plugin.sendMessage(target, "&aYour timer has been reset by " + sender.getName());
+
+                for (String command : plugin.getConfig().getStringList("commandsToExecuteOnReset")) {
+                    if (command != null)
+                        Bukkit.dispatchCommand(Bukkit.getConsoleSender(),
+                                command.replaceAll("%player%", target.getName()));
+                }
             } else
                 plugin.sendMessage(sender, help);
 

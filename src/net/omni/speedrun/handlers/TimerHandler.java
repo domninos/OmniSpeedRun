@@ -7,7 +7,6 @@ import org.bukkit.entity.Player;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 public class TimerHandler {
     private final Map<String, Integer> timers = new HashMap<>();
@@ -157,38 +156,6 @@ public class TimerHandler {
      */
     public int getTimer(String name) {
         return timers.getOrDefault(name, 0);
-    }
-
-    /**
-     * Converts seconds to a formatted {@code String}
-     *
-     * @param time - {@code Integer} Time to convert
-     * @return {@code String} - converted string
-     */
-    public String convertTime(int time) {
-        int day = (int) TimeUnit.SECONDS.toDays(time);
-        long hours = TimeUnit.SECONDS.toHours(time) - (day * 24);
-        long minute = TimeUnit.SECONDS.toMinutes(time) - (TimeUnit.SECONDS.toHours(time) * 60);
-        long second = TimeUnit.SECONDS.toSeconds(time) - (TimeUnit.SECONDS.toMinutes(time) * 60);
-
-        String converted = "";
-
-        if (day > 0)
-            converted += day + "d ";
-
-        if (hours > 0)
-            converted += hours + "h ";
-
-        if (minute > 0)
-            converted += minute + "m ";
-
-        if (second > 0)
-            converted += second + "s ";
-
-        if (converted.isEmpty())
-            converted += "0";
-
-        return converted;
     }
 
     /**

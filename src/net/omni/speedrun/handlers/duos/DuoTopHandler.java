@@ -1,19 +1,15 @@
-package net.omni.speedrun.handlers;
+package net.omni.speedrun.handlers.duos;
 
 import net.omni.speedrun.SpeedRunPlugin;
-import org.bukkit.configuration.ConfigurationSection;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
-public class TopHandler {
+public class DuoTopHandler {
     private final SpeedRunPlugin plugin;
     private final String[] tops = new String[5];
 
-    public TopHandler(SpeedRunPlugin plugin) {
+    public DuoTopHandler(SpeedRunPlugin plugin) {
         this.plugin = plugin;
     }
 
@@ -21,7 +17,7 @@ public class TopHandler {
      * Updates the top 5 scores.
      */
     public void update() {
-        ConfigurationSection section = plugin.getConfig().getConfigurationSection("finished");
+        List<String> section = plugin.getDuoConfig().getStringList("duos.finished");
 
         if (section == null) {
             Arrays.fill(tops, "Unavailable");
@@ -30,9 +26,15 @@ public class TopHandler {
 
         Map<String, Integer> times = new HashMap<>();
 
-        for (String key : section.getKeys(false)) {
-            if (key != null)
-                times.put(key, plugin.getConfig().getInt("finished." + key));
+        for (String key : section) {
+            if (key == null)
+                continue;
+
+            String[] split = key.split("\\|");
+
+            int time = Integer.parseInt(split[2]);
+
+            times.put(split[0] + " and " + split[1], time);
         }
 
         Map<String, Integer> topFive =
@@ -50,7 +52,7 @@ public class TopHandler {
             topFiveString.put(count++,
                     "&e" + entry.getKey() + ": &l&f" + plugin.convertTime(entry.getValue()));
 
-        plugin.sendConsole("&l&3Updated Top " + (count - 1));
+        plugin.sendConsole("&l&3Updated Duo Top " + (count - 1));
 
         for (Map.Entry<Integer, String> entry : topFiveString.entrySet())
             plugin.sendConsole("&3" + entry.getKey() + ") " + entry.getValue());

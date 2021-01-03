@@ -55,10 +55,9 @@ public class SpeedRunPlaceholder extends PlaceholderExpansion {
             return top;
         } else if (params.equals("timer")) {
             if (plugin.getTimerHandler().hasTimer(player.getName()))
-                return plugin.getTimerHandler().convertTime(plugin.getTimerHandler().getTimer(player.getName()));
+                return plugin.convertTime(plugin.getTimerHandler().getTimer(player.getName()));
             else if (plugin.getTimerHandler().isInConfig(player.getName()))
-                return plugin.getTimerHandler().
-                        convertTime(plugin.getTimerHandler().getTimeInConfig(player.getName()));
+                return plugin.convertTime(plugin.getTimerHandler().getTimeInConfig(player.getName()));
         }
 
         return "Unavailable";

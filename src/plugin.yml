@@ -13,3 +13,10 @@ commands:
     aliases:
       - sr
       - speedr
+  duospeedrun:
+    usage: /<command>
+    description: Main command for duos.
+    aliases:
+      - dsr
+      - duospeed
+      - duospeedr
